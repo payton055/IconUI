@@ -13,11 +13,14 @@ ctk.set_default_color_theme("dark-blue")
 root = ctk.CTk()
 root.wm_attributes("-transparentcolor", "#123")
 root.title("Select Color")
-root.geometry(f"{900}x{750}")
+#root.resizable(True,True)
+root.geometry(f"{1500}x{1200}")
 
 variable = "Kind of Blue"
-c = ctk.StringVar()  
+c = ctk.StringVar()
 c.set(variable)
+cluster_num = ctk.IntVar()
+cluster_num.set(5)
 
 openfilename = ""
 svgcommand = ""
@@ -27,6 +30,7 @@ data = {}
 colors = color.colors()
 data = colors
 
+
 def openfile():
     global openfilename
     global svgcommand
@@ -35,68 +39,107 @@ def openfile():
     f = open(openfilename, "r")
     svgcommand = f.read()
 
-    cairosvg.svg2png(url=openfilename, write_to='output.png', output_width=140, output_height=140)
-    
-    ori_img = ctk.CTkImage(light_image=Image.open('output.png'),size=(140, 140))
-    pic = ctk.CTkLabel(img_bef,text="",image=ori_img)
-    pic.grid(column=0, row=0,padx=10,pady=10)
+    cairosvg.svg2png(url=openfilename, write_to='output.png',
+                     output_width=140, output_height=140)
 
-    aft_img1 = ctk.CTkButton(img_aft1 ,image=ori_img,text="",fg_color="transparent",hover_color="grey",width=200,height=200) #TODO Update processed image and select function
-    aft_img1.grid(column=0, row=0,padx=5,pady=5)
+    ori_img = ctk.CTkImage(light_image=Image.open(
+        'output.png'), size=(60, 60))
+    pic = ctk.CTkLabel(img_bef, text="", image=ori_img)
+    pic.grid(column=0, row=0, padx=10, pady=10)
 
-    if openfilename == "":return
+    aft_img1 = ctk.CTkButton(img_aft0, image=ori_img, text="", fg_color="transparent",
+                             hover_color="grey", width=100, height=100)  # TODO Update processed image and select function
+    aft_img1.grid(column=0, row=0, padx=5, pady=5)
+    aft_img2 = ctk.CTkButton(img_aft0, image=ori_img, text="", fg_color="transparent",
+                             hover_color="grey", width=100, height=100)  # TODO Update processed image and select function
+    aft_img2.grid(column=1, row=0, padx=5, pady=5)
+    aft_img3 = ctk.CTkButton(img_aft0, image=ori_img, text="", fg_color="transparent",
+                             hover_color="grey", width=100, height=100)  # TODO Update processed image and select function
+    aft_img3.grid(column=2, row=0, padx=5, pady=5)
+    aft_img4 = ctk.CTkButton(img_aft0, image=ori_img, text="", fg_color="transparent",
+                             hover_color="grey", width=100, height=100)  # TODO Update processed image and select function
+    aft_img4.grid(column=3, row=0, padx=5, pady=5)
+    aft_img5 = ctk.CTkButton(img_aft0, image=ori_img, text="", fg_color="transparent",
+                             hover_color="grey", width=100, height=100)  # TODO Update processed image and select function
+    aft_img5.grid(column=4, row=0, padx=5, pady=5)
 
-def savefile(): #TODO
+
+    if openfilename == "":
+        return
+
+
+def savefile():  # TODO
     global savefilename
-    
-    savefilename = filedialog.asksaveasfile(mode='w',filetypes=[("svg files", "*.svg")])
+
+    savefilename = filedialog.asksaveasfile(
+        mode='w', filetypes=[("svg files", "*.svg")])
     savefilename.write(svgcommand)
     savefilename.close()
-    if savefilename == "":return
+    if savefilename == "":
+        return
+
 
 def setcolor(value):
-    global variable       
-    variable=value        
+    global variable
+    variable = value
     c.set(variable)
-    canvas.create_rectangle(8, 8, 40, 40, fill=colors[variable][0],width=0)
-    canvas.create_rectangle(48, 8, 80, 40, fill=colors[variable][1],width=0)
-    canvas.create_rectangle(88, 8, 120, 40, fill=colors[variable][2],width=0)
-    canvas.create_rectangle(128, 8, 160, 40,  fill=colors[variable][3],width=0)
-    canvas.create_rectangle(168, 8, 200, 40,  fill=colors[variable][4],width=0) #TODO update image by color palette
+    canvas.create_rectangle(8, 8, 40, 40, fill=colors[variable][0], width=0)
+    canvas.create_rectangle(48, 8, 80, 40, fill=colors[variable][1], width=0)
+    canvas.create_rectangle(88, 8, 120, 40, fill=colors[variable][2], width=0)
+    canvas.create_rectangle(
+        128, 8, 160, 40,  fill=colors[variable][3], width=0)
+    # TODO update image by color palette
+    canvas.create_rectangle(
+        168, 8, 200, 40,  fill=colors[variable][4], width=0)
 
 
-mylabel = ctk.CTkLabel(root, textvariable=c, font=('Arial',20),width=200,wraplength=200)
+def get_cluster_num(e):
+    cluster_num.set(cluster_numbar.get())
+    for i in range(cluster_numbar.get()):
+        if(i<5):
+            globals()['img_aft'+str(i)] = ctk.CTkFrame(root, width=600, height=160)
+            globals()['img_aft'+str(i)].grid(column=2, row=4+i, padx=3, pady=3, columnspan=2)
+        else:
+            globals()['img_aft'+str(i)] = ctk.CTkFrame(root, width=600, height=160)
+            globals()['img_aft'+str(i)].grid(column=4, row=4+i-5, padx=3, pady=3, columnspan=2)
+
+
+mylabel = ctk.CTkLabel(root, textvariable=c, font=(
+    'Arial', 20), width=200, wraplength=200)
 mylabel.grid(column=3, row=2)
 
-canvas = tk.Canvas(root, width=208, height=48,bg="lightgrey",highlightthickness=0)
-canvas.create_rectangle(8, 8, 40, 40, fill=colors[variable][0],width=0)
-canvas.create_rectangle(48, 8, 80, 40, fill=colors[variable][1],width=0)
-canvas.create_rectangle(88, 8, 120, 40, fill=colors[variable][2],width=0)
-canvas.create_rectangle(128, 8, 160, 40,  fill=colors[variable][3],width=0)
-canvas.create_rectangle(168, 8, 200, 40,  fill=colors[variable][4],width=0)
+canvas = tk.Canvas(root, width=208, height=48,
+                   bg="lightgrey", highlightthickness=0)
+canvas.create_rectangle(8, 8, 40, 40, fill=colors[variable][0], width=0)
+canvas.create_rectangle(48, 8, 80, 40, fill=colors[variable][1], width=0)
+canvas.create_rectangle(88, 8, 120, 40, fill=colors[variable][2], width=0)
+canvas.create_rectangle(128, 8, 160, 40,  fill=colors[variable][3], width=0)
+canvas.create_rectangle(168, 8, 200, 40,  fill=colors[variable][4], width=0)
 
-canvas.grid(column=3, row=3,pady=0,sticky="n")
+canvas.grid(column=3, row=3, pady=0, sticky="n")
 
-selectcolor = ctk.CTkScrollableFrame(root,width=400,height=550)
+selectcolor = ctk.CTkScrollableFrame(root, width=400, height=550)
 count = 1
 for i in data:
-    btn = ctk.CTkButton(selectcolor,text='',fg_color="transparent",width=400)
-    a = ctk.CTkButton(btn, command = lambda i=i: setcolor(i),text=i,text_color="#2F4F4F",width=400,fg_color="darkgray",hover_color="grey")
-    c1 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][0], width=80, height=2)
-    c2 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][1], width=80, height=2)
-    c3 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][2], width=80, height=2)
-    c4 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][3], width=80, height=2)
-    c5 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][4], width=80, height=2)
+    btn = ctk.CTkButton(selectcolor, text='',
+                        fg_color="transparent", width=400)
+    a = ctk.CTkButton(btn, command=lambda i=i: setcolor(
+        i), text=i, text_color="#2F4F4F", width=400, fg_color="darkgray", hover_color="grey")
+    c1 = ctk.CTkLabel(btn, text='', fg_color=colors[i][0], width=80, height=2)
+    c2 = ctk.CTkLabel(btn, text='', fg_color=colors[i][1], width=80, height=2)
+    c3 = ctk.CTkLabel(btn, text='', fg_color=colors[i][2], width=80, height=2)
+    c4 = ctk.CTkLabel(btn, text='', fg_color=colors[i][3], width=80, height=2)
+    c5 = ctk.CTkLabel(btn, text='', fg_color=colors[i][4], width=80, height=2)
 
-    a.grid(column=0, row=0,columnspan=5,padx=0)
-    c1.grid(column=0, row=1,padx=0)
-    c2.grid(column=1, row=1,padx=0)
-    c3.grid(column=2, row=1,padx=0)
-    c4.grid(column=3, row=1,padx=0)
-    c5.grid(column=4, row=1,padx=0)
-    btn.grid(column=0, row=count,sticky="ew",pady=5)
+    a.grid(column=0, row=0, columnspan=5, padx=0)
+    c1.grid(column=0, row=1, padx=0)
+    c2.grid(column=1, row=1, padx=0)
+    c3.grid(column=2, row=1, padx=0)
+    c4.grid(column=3, row=1, padx=0)
+    c5.grid(column=4, row=1, padx=0)
+    btn.grid(column=0, row=count, sticky="ew", pady=5)
     count += 1
-selectcolor.grid(column=0, row=2,rowspan=4,sticky="n",padx=10)
+selectcolor.grid(column=0, row=2, rowspan=4, sticky="n", padx=10)
 
 
 def Scankey(event):
@@ -105,7 +148,7 @@ def Scankey(event):
     global data
 
     if val == '':
-        if(len(data) != len(colors)):
+        if (len(data) != len(colors)):
             data = colors
             update = TRUE
     else:
@@ -114,57 +157,68 @@ def Scankey(event):
             if val.lower() in item.lower():
                 data[item] = colors[item]
         update = TRUE
-    if(update):
-        selectcolor = ctk.CTkScrollableFrame(root,width=400,height=550)
+    if (update):
+        selectcolor = ctk.CTkScrollableFrame(root, width=400, height=550)
         count = 1
         for i in data:
-            btn = ctk.CTkButton(selectcolor,text='',fg_color="transparent",width=400)
-            a = ctk.CTkButton(btn, command = lambda i=i: setcolor(i),text=i,width=400)
-            c1 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][0], width=80, height=2)
-            c2 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][1], width=80, height=2)
-            c3 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][2], width=80, height=2)
-            c4 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][3], width=80, height=2)
-            c5 =  ctk.CTkLabel(btn, text='',fg_color=colors[i][4], width=80, height=2)
+            btn = ctk.CTkButton(selectcolor, text='',
+                                fg_color="transparent", width=400)
+            a = ctk.CTkButton(
+                btn, command=lambda i=i: setcolor(i), text=i, width=400)
+            c1 = ctk.CTkLabel(
+                btn, text='', fg_color=colors[i][0], width=80, height=2)
+            c2 = ctk.CTkLabel(
+                btn, text='', fg_color=colors[i][1], width=80, height=2)
+            c3 = ctk.CTkLabel(
+                btn, text='', fg_color=colors[i][2], width=80, height=2)
+            c4 = ctk.CTkLabel(
+                btn, text='', fg_color=colors[i][3], width=80, height=2)
+            c5 = ctk.CTkLabel(
+                btn, text='', fg_color=colors[i][4], width=80, height=2)
 
-            a.grid(column=0, row=0,columnspan=5,padx=0)
+            a.grid(column=0, row=0, columnspan=5, padx=0)
             c1.grid(column=0, row=1)
             c2.grid(column=1, row=1)
             c3.grid(column=2, row=1)
             c4.grid(column=3, row=1)
             c5.grid(column=4, row=1)
-            btn.grid(column=0, row=count,pady=2)
+            btn.grid(column=0, row=count, pady=2)
             count += 1
-        selectcolor.grid(column=0, row=2,rowspan=4,sticky="n",padx=10)
+        selectcolor.grid(column=0, row=2, rowspan=4, sticky="n", padx=10)
 
 
 entry = ctk.CTkEntry(root, placeholder_text="Enter to search...")
-entry.grid(column=0, row=1,sticky="n",pady=40)
+entry.grid(column=0, row=1, sticky="n", pady=40)
 entry.bind('<KeyRelease>', Scankey)
 
-openf = ctk.CTkButton(root,text="Open",command = openfile)
-openf.grid(column=2,row=1,padx=30,pady=10)
+openf = ctk.CTkButton(root, text="Open", command=openfile)
+openf.grid(column=2, row=1, padx=30, pady=10)
 
-savef = ctk.CTkButton(root,text="Save",command = savefile)
-savef.grid(column=3,row=1,padx=30,pady=10)
+savef = ctk.CTkButton(root, text="Save", command=savefile)
+savef.grid(column=3, row=1, padx=30, pady=10)
 
 img_bef = ctk.CTkFrame(root, width=160, height=160)
-img_bef.grid(column=2, row=2,pady=3,rowspan=2)
+img_bef.grid(column=2, row=2, pady=3, rowspan=2)
 
-img_aft1 = ctk.CTkFrame(root, width=210, height=210)
-img_aft1.grid(column=2, row=4,padx=3,pady=3)
+'''img_aft1 = ctk.CTkFrame(root, width=800, height=160)
+img_aft1.grid(column=2, row=4, padx=3, pady=3, columnspan=2)
 
-img_aft2 = ctk.CTkFrame(root, width=210, height=210)
-img_aft2.grid(column=2, row=5,padx=3,pady=3)
+img_aft2 = ctk.CTkFrame(root, width=800, height=160)
+img_aft2.grid(column=2, row=5, padx=3, pady=3, columnspan=2)
 
-img_aft3 = ctk.CTkFrame(root, width=210, height=210)
-img_aft3.grid(column=3, row=4,padx=3,pady=3)
+img_aft3 = ctk.CTkFrame(root, width=800, height=160)
+img_aft3.grid(column=2, row=6, padx=3, pady=3, columnspan=2)
 
-img_aft4 = ctk.CTkFrame(root, width=210, height=210)
-img_aft4.grid(column=3, row=5,padx=3,pady=3)
+img_aft4 = ctk.CTkFrame(root, width=800, height=160)
+img_aft4.grid(column=2, row=7, padx=3, pady=3, columnspan=2)'''
+
+# cluster_numbar = ctk.CTkSlider(root, from_=1, to=5, command=get_cluster_num)
+cluster_numbar = tk.Scale(root, from_=1, to=10,
+                          orient='horizontal', command=get_cluster_num)
+cluster_numbar.grid(column=3, row=3, padx=3, pady=50)
 
 '''my_image = ctk.CTkImage(light_image=Image.open('output.png'),size=(200, 200))
 pic = ctk.CTkLabel(img_bef,text="",image=my_image)
 pic.grid(column=0, row=0,padx=25,pady=25)'''
 
 root.mainloop()
-
